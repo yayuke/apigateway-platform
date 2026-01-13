@@ -1,7 +1,7 @@
 package com.apigateway.user.service.impl;
 
-import cn.dev33.satoken.secure.BCrypt;
 import com.apigateway.common.exception.BusinessException;
+import com.apigateway.common.util.PasswordUtils;
 import com.apigateway.user.entity.User;
 import com.apigateway.user.mapper.UserMapper;
 import com.apigateway.user.service.IUserService;
@@ -64,7 +64,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
         // 加密密码
         if (StringUtils.hasText(user.getPassword())) {
-            user.setPassword(BCrypt.hashpw(user.getPassword()));
+            user.setPassword(PasswordUtils.encrypt(user.getPassword()));
         }
 
         // 设置默认状态
@@ -90,7 +90,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         // 如果修改了密码，需要加密
         if (StringUtils.hasText(user.getPassword()) &&
             !user.getPassword().equals(existingUser.getPassword())) {
-            user.setPassword(BCrypt.hashpw(user.getPassword()));
+            user.setPassword(PasswordUtils.encrypt(user.getPassword()));
         }
 
         return this.updateById(user);
@@ -145,7 +145,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             throw new BusinessException("用户不存在");
         }
 
-        user.setPassword(BCrypt.hashpw(newPassword));
+        user.setPassword(PasswordUtils.encrypt(newPassword));
         return this.updateById(user);
     }
 }
